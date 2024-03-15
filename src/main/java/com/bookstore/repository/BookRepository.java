@@ -7,4 +7,6 @@ public interface BookRepository {
     Book save(Book book);
 
     List<Book> findAll();
+
+    Book getByBookId(Long id);
 }

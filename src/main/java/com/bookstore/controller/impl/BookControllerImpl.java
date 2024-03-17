@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(value = "/api/books")
+@RequestMapping(value = "/books")
 public class BookControllerImpl implements BookController {
 
     private final BookService bookService;

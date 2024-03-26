@@ -18,6 +18,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class BookServiceImpl implements BookService {
 
+    private static final String NOT_FOUND_ERROR = "Book doesn't exist. ID: %s";
+
     private final BookRepository bookRepository;
     private final BookMapper bookMapper;
     private final BookSpecificationBuilder bookSpecificationBuilder;
@@ -40,7 +42,7 @@ public class BookServiceImpl implements BookService {
     public BookDto findById(Long id) {
         return bookRepository.findById(id)
                 .map(bookMapper::toDto)
-                .orElseThrow(() -> new EntityNotFoundException("Book doesn't exist. ID: " + id));
+                .orElseThrow(() -> new EntityNotFoundException(String.format(NOT_FOUND_ERROR, id)));
     }
 
     @Override
@@ -50,11 +52,13 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public BookDto updateById(Long id, CreateBookRequestDto createBookRequestDto) {
-        Book book = bookMapper.toModel(createBookRequestDto);
-        book.setId(id);
+        Book existingBook = bookRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException(String.format(NOT_FOUND_ERROR, id)));
 
-        Book savedBook = bookRepository.save(book);
-        return bookMapper.toDto(savedBook);
+        bookMapper.updateBookFromDto(existingBook, createBookRequestDto);
+
+        Book updatedBook = bookRepository.save(existingBook);
+        return bookMapper.toDto(updatedBook);
     }
 
     @Override

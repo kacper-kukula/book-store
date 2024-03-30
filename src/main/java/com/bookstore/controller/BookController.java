@@ -1,8 +1,8 @@
 package com.bookstore.controller;
 
-import com.bookstore.dto.BookDto;
-import com.bookstore.dto.BookSearchParameters;
-import com.bookstore.dto.CreateBookRequestDto;
+import com.bookstore.dto.book.BookRequestDto;
+import com.bookstore.dto.book.BookResponseDto;
+import com.bookstore.dto.book.BookSearchParameters;
 import com.bookstore.service.BookService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -31,20 +31,20 @@ public class BookController {
 
     @GetMapping
     @Operation(summary = "Find all books", description = "Find all available books")
-    public List<BookDto> findAll(Pageable pageable) {
+    public List<BookResponseDto> findAll(Pageable pageable) {
         return bookService.findAll(pageable);
     }
 
     @GetMapping("/{id}")
     @Operation(summary = "Find a book by ID", description = "Find a book if it exists")
-    public BookDto findById(@PathVariable Long id) {
+    public BookResponseDto findById(@PathVariable Long id) {
         return bookService.findById(id);
     }
 
     @PostMapping
     @Operation(summary = "Create a book", description = "Creates a new book")
-    public BookDto createBook(@RequestBody @Valid CreateBookRequestDto createBookRequestDto) {
-        return bookService.save(createBookRequestDto);
+    public BookResponseDto createBook(@RequestBody @Valid BookRequestDto bookRequestDto) {
+        return bookService.save(bookRequestDto);
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -56,14 +56,14 @@ public class BookController {
 
     @PutMapping("/{id}")
     @Operation(summary = "Update a book", description = "Update a book by ID")
-    public BookDto updateById(@PathVariable Long id,
-                              @RequestBody @Valid CreateBookRequestDto createBookRequestDto) {
-        return bookService.updateById(id, createBookRequestDto);
+    public BookResponseDto updateById(@PathVariable Long id,
+                                      @RequestBody @Valid BookRequestDto bookRequestDto) {
+        return bookService.updateById(id, bookRequestDto);
     }
 
     @GetMapping("/search")
     @Operation(summary = "Search by criteria", description = "Search by criteria")
-    public List<BookDto> search(BookSearchParameters searchParameters) {
+    public List<BookResponseDto> search(BookSearchParameters searchParameters) {
         return bookService.search(searchParameters);
     }
 }

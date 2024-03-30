@@ -1,8 +1,8 @@
 package com.bookstore.service.impl;
 
-import com.bookstore.dto.BookDto;
-import com.bookstore.dto.BookSearchParameters;
-import com.bookstore.dto.CreateBookRequestDto;
+import com.bookstore.dto.book.BookRequestDto;
+import com.bookstore.dto.book.BookResponseDto;
+import com.bookstore.dto.book.BookSearchParameters;
 import com.bookstore.exception.EntityNotFoundException;
 import com.bookstore.mapper.BookMapper;
 import com.bookstore.model.Book;
@@ -26,21 +26,21 @@ public class BookServiceImpl implements BookService {
     private final BookSpecificationBuilder bookSpecificationBuilder;
 
     @Override
-    public BookDto save(CreateBookRequestDto createBookRequestDto) {
-        Book book = bookMapper.toModel(createBookRequestDto);
+    public BookResponseDto save(BookRequestDto bookRequestDto) {
+        Book book = bookMapper.toModel(bookRequestDto);
         Book savedBook = bookRepository.save(book);
         return bookMapper.toDto(savedBook);
     }
 
     @Override
-    public List<BookDto> findAll(Pageable pageable) {
+    public List<BookResponseDto> findAll(Pageable pageable) {
         return bookRepository.findAll(pageable).stream()
                 .map(bookMapper::toDto)
                 .toList();
     }
 
     @Override
-    public BookDto findById(Long id) {
+    public BookResponseDto findById(Long id) {
         return bookRepository.findById(id)
                 .map(bookMapper::toDto)
                 .orElseThrow(() -> new EntityNotFoundException(String.format(NOT_FOUND_ERROR, id)));
@@ -52,18 +52,18 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public BookDto updateById(Long id, CreateBookRequestDto createBookRequestDto) {
+    public BookResponseDto updateById(Long id, BookRequestDto bookRequestDto) {
         Book existingBook = bookRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(String.format(NOT_FOUND_ERROR, id)));
 
-        bookMapper.updateBookFromDto(existingBook, createBookRequestDto);
+        bookMapper.updateBookFromDto(existingBook, bookRequestDto);
 
         Book updatedBook = bookRepository.save(existingBook);
         return bookMapper.toDto(updatedBook);
     }
 
     @Override
-    public List<BookDto> search(BookSearchParameters params) {
+    public List<BookResponseDto> search(BookSearchParameters params) {
         Specification<Book> bookSpecification = bookSpecificationBuilder.build(params);
 
         return bookRepository.findAll(bookSpecification)

@@ -1,4 +1,4 @@
-package com.bookstore.dto;
+package com.bookstore.dto.book;
 
 import java.math.BigDecimal;
 

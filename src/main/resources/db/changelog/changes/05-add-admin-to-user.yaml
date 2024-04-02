@@ -1,0 +1,38 @@
+databaseChangeLog:
+    - changeSet:
+          id: add-admin
+          author: Kacper Kukula
+          changes:
+              - insert:
+                    tableName: roles
+                    columns:
+                        - column:
+                              name: name
+                              value: 'ADMIN'
+              - insert:
+                  tableName: users
+                  columns:
+                    - column:
+                        name: email
+                        value: 'admin@book-store.com'
+                    - column:
+                        name: password
+                        value: '$2a$10$AIs/JUgVrubPhidibdXlZODKvtenExzx66hbBTafyAkRHeAn9oOUO'
+                    - column:
+                        name: first_name
+                        value: 'Kacper'
+                    - column:
+                        name: last_name
+                        value: 'Kukula'
+                    - column:
+                        name: shipping_address
+                        value: 'Czestochowa, Poland'
+              - insert:
+                    tableName: users_roles
+                    columns:
+                        - column:
+                              name: user_id
+                              valueComputed: (SELECT id FROM users WHERE email = 'admin@book-store.com')
+                        - column:
+                              name: role_id
+                              valueComputed: (SELECT id FROM roles WHERE name = 'ADMIN')

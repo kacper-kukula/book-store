@@ -1,4 +1,4 @@
-package com.bookstore.service.impl;
+package com.bookstore.security;
 
 import com.bookstore.exception.EntityNotFoundException;
 import com.bookstore.repository.user.UserRepository;

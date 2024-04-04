@@ -1,4 +1,4 @@
-package com.bookstore.validator;
+package com.bookstore.security.validator;
 
 import static java.lang.annotation.ElementType.ANNOTATION_TYPE;
 import static java.lang.annotation.ElementType.TYPE;

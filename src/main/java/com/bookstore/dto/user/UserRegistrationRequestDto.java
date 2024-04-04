@@ -1,6 +1,6 @@
 package com.bookstore.dto.user;
 
-import com.bookstore.validator.FieldMatch;
+import com.bookstore.security.validator.FieldMatch;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import org.hibernate.validator.constraints.Length;

@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
 import jakarta.validation.constraints.Size;
 import java.math.BigDecimal;
+import java.util.Set;
 
 public record BookRequestDto(
         @NotBlank @Size(max = 100) String title,
@@ -12,5 +13,7 @@ public record BookRequestDto(
         @NotBlank @Size(max = 13) String isbn,
         @NotNull @PositiveOrZero BigDecimal price,
         @NotBlank @Size(max = 255) String description,
-        @NotBlank @Size(max = 255) String coverImage
-) {}
+        @NotBlank @Size(max = 255) String coverImage,
+        @NotNull Set<@NotBlank String> categories
+) {
+}

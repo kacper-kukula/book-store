@@ -6,28 +6,38 @@ import com.bookstore.dto.book.BookSearchParameters;
 import com.bookstore.exception.EntityNotFoundException;
 import com.bookstore.mapper.BookMapper;
 import com.bookstore.model.Book;
+import com.bookstore.model.Category;
 import com.bookstore.repository.book.BookRepository;
 import com.bookstore.repository.book.BookSpecificationBuilder;
+import com.bookstore.repository.category.CategoryRepository;
 import com.bookstore.service.BookService;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-@RequiredArgsConstructor
 @Service
+@RequiredArgsConstructor
 public class BookServiceImpl implements BookService {
 
-    private static final String NOT_FOUND_ERROR = "Book doesn't exist. ID: %s";
+    private static final String NOT_FOUND_ERROR = "Book doesn't exist. ID: ";
 
     private final BookRepository bookRepository;
     private final BookMapper bookMapper;
     private final BookSpecificationBuilder bookSpecificationBuilder;
+    private final CategoryRepository categoryRepository;
 
     @Override
     public BookResponseDto save(BookRequestDto bookRequestDto) {
-        Book book = bookMapper.toModel(bookRequestDto);
+        Set<String> categoryNames = bookRequestDto.categories();
+        Set<Category> categoriesFromDb = categoryNames.stream()
+                .map(categoryRepository::findByNameIgnoreCase)
+                .collect(Collectors.toSet());
+
+        Book book = bookMapper.toModel(bookRequestDto, categoriesFromDb);
         Book savedBook = bookRepository.save(book);
         return bookMapper.toDto(savedBook);
     }
@@ -43,7 +53,7 @@ public class BookServiceImpl implements BookService {
     public BookResponseDto findById(Long id) {
         return bookRepository.findById(id)
                 .map(bookMapper::toDto)
-                .orElseThrow(() -> new EntityNotFoundException(String.format(NOT_FOUND_ERROR, id)));
+                .orElseThrow(() -> new EntityNotFoundException(NOT_FOUND_ERROR + id));
     }
 
     @Override
@@ -54,9 +64,14 @@ public class BookServiceImpl implements BookService {
     @Override
     public BookResponseDto updateById(Long id, BookRequestDto bookRequestDto) {
         Book existingBook = bookRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException(String.format(NOT_FOUND_ERROR, id)));
+                .orElseThrow(() -> new EntityNotFoundException(NOT_FOUND_ERROR + id));
 
-        bookMapper.updateBookFromDto(existingBook, bookRequestDto);
+        Set<String> categoryNames = bookRequestDto.categories();
+        Set<Category> categoriesFromDb = categoryNames.stream()
+                .map(categoryRepository::findByNameIgnoreCase)
+                .collect(Collectors.toSet());
+
+        bookMapper.updateBookFromDto(existingBook, bookRequestDto, categoriesFromDb);
 
         Book updatedBook = bookRepository.save(existingBook);
         return bookMapper.toDto(updatedBook);

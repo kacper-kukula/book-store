@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-@Tag(name = "Category controller", description = "Endpoints for managing books categories")
+@Tag(name = "Category controller", description = "Endpoints for managing books categoryIds")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(value = "/categories")
@@ -30,7 +30,7 @@ public class CategoryController {
 
     private final CategoryService categoryService;
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     @Operation(summary = "Create new category", description = "Creates a new book category")
     public CategoryResponseDto createCategory(
@@ -38,21 +38,21 @@ public class CategoryController {
         return categoryService.save(categoryRequestDto);
     }
 
-    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @GetMapping
-    @Operation(summary = "Find all categories", description = "Find all available categories")
+    @Operation(summary = "Find all categoryIds", description = "Find all available categoryIds")
     public List<CategoryResponseDto> findAll(Pageable pageable) {
         return categoryService.findAll(pageable);
     }
 
-    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @GetMapping("/{id}")
     @Operation(summary = "Find a category by ID", description = "Find a category if it exists")
     public CategoryResponseDto findById(@PathVariable Long id) {
         return categoryService.findById(id);
     }
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
     @Operation(summary = "Update a category", description = "Update a category by ID")
     public CategoryResponseDto updateById(
@@ -61,7 +61,7 @@ public class CategoryController {
         return categoryService.updateById(id, categoryRequestDto);
     }
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete a category", description = "Soft delete a category by ID")
@@ -69,7 +69,7 @@ public class CategoryController {
         categoryService.deleteById(id);
     }
 
-    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @GetMapping("/{id}/books")
     @Operation(summary = "Find all books belonging to that category",
             description = "Find a list of books belonging to specific category")

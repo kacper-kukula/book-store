@@ -15,34 +15,43 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.Hibernate;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
 public class BookServiceImpl implements BookService {
 
-    private static final String NOT_FOUND_ERROR = "Book doesn't exist. ID: ";
+    private static final String BOOK_NOT_FOUND_ERROR = "Book doesn't exist. ID: ";
+    private static final String CATEGORY_NOT_FOUND_ERROR = "Category doesn't exist. ID: ";
 
     private final BookRepository bookRepository;
+    private final CategoryRepository categoryRepository;
     private final BookMapper bookMapper;
     private final BookSpecificationBuilder bookSpecificationBuilder;
-    private final CategoryRepository categoryRepository;
 
     @Override
+    @Transactional
     public BookResponseDto save(BookRequestDto bookRequestDto) {
-        Set<String> categoryNames = bookRequestDto.categories();
-        Set<Category> categoriesFromDb = categoryNames.stream()
-                .map(categoryRepository::findByNameIgnoreCase)
+        Set<Long> categoryIds = bookRequestDto.categoryIds();
+        Set<Category> categories = categoryIds.stream()
+                .map(c -> categoryRepository.findById(c)
+                        .orElseThrow(() ->
+                                new EntityNotFoundException(CATEGORY_NOT_FOUND_ERROR + c)))
                 .collect(Collectors.toSet());
 
-        Book book = bookMapper.toModel(bookRequestDto, categoriesFromDb);
+        Book book = bookMapper.toEntity(bookRequestDto);
+        book.setCategories(categories);
         Book savedBook = bookRepository.save(book);
+
         return bookMapper.toDto(savedBook);
     }
 
     @Override
+    @Transactional
     public List<BookResponseDto> findAll(Pageable pageable) {
         return bookRepository.findAll(pageable).stream()
                 .map(bookMapper::toDto)
@@ -50,10 +59,11 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
+    @Transactional
     public BookResponseDto findById(Long id) {
         return bookRepository.findById(id)
                 .map(bookMapper::toDto)
-                .orElseThrow(() -> new EntityNotFoundException(NOT_FOUND_ERROR + id));
+                .orElseThrow(() -> new EntityNotFoundException(BOOK_NOT_FOUND_ERROR + id));
     }
 
     @Override
@@ -62,22 +72,27 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
+    @Transactional
     public BookResponseDto updateById(Long id, BookRequestDto bookRequestDto) {
         Book existingBook = bookRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException(NOT_FOUND_ERROR + id));
+                .orElseThrow(() -> new EntityNotFoundException(BOOK_NOT_FOUND_ERROR + id));
 
-        Set<String> categoryNames = bookRequestDto.categories();
-        Set<Category> categoriesFromDb = categoryNames.stream()
-                .map(categoryRepository::findByNameIgnoreCase)
+        Set<Long> categoryIds = bookRequestDto.categoryIds();
+        Set<Category> categories = categoryIds.stream()
+                .map(c -> categoryRepository.findById(c)
+                        .orElseThrow(() ->
+                                new EntityNotFoundException(CATEGORY_NOT_FOUND_ERROR + c)))
                 .collect(Collectors.toSet());
 
-        bookMapper.updateBookFromDto(existingBook, bookRequestDto, categoriesFromDb);
-
+        bookMapper.updateBookFromDto(existingBook, bookRequestDto);
+        existingBook.setCategories(categories);
         Book updatedBook = bookRepository.save(existingBook);
+
         return bookMapper.toDto(updatedBook);
     }
 
     @Override
+    @Transactional
     public List<BookResponseDto> search(BookSearchParameters params) {
         Specification<Book> bookSpecification = bookSpecificationBuilder.build(params);
 

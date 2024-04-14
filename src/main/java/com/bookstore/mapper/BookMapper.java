@@ -8,7 +8,6 @@ import com.bookstore.model.Book;
 import com.bookstore.model.Category;
 import java.util.Set;
 import java.util.stream.Collectors;
-import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
@@ -16,26 +15,19 @@ import org.mapstruct.MappingTarget;
 @Mapper(config = MapperConfig.class)
 public interface BookMapper {
 
+    @Mapping(target = "categoryIds", source = "categories")
     BookResponseDto toDto(Book book);
 
-    @Mapping(target = "categories", source = "categoriesSet")
-    Book toModel(BookRequestDto bookRequestDto, Set<Category> categoriesSet);
+    Book toEntity(BookRequestDto bookRequestDto);
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "categories", source = "categoriesSet")
-    void updateBookFromDto(@MappingTarget Book book, BookRequestDto dto,
-                           Set<Category> categoriesSet);
+    void updateBookFromDto(@MappingTarget Book book, BookRequestDto dto);
 
     BookResponseDtoWithoutCategoryIds toDtoWithoutCategories(Book book);
 
-    default Set<String> mapCategoryToString(Set<Category> categories) {
+    default Set<Long> mapCategoryToIds(Set<Category> categories) {
         return categories.stream()
-                .map(Category::getName)
+                .map(Category::getId)
                 .collect(Collectors.toSet());
-    }
-
-    @AfterMapping
-    default void setCategoryIds(@MappingTarget BookResponseDto bookResponseDto, Book book) {
-
     }
 }

@@ -22,7 +22,7 @@ databaseChangeLog:
                   type: VARCHAR(255)
               - column:
                   name: is_deleted
-                  type: BIT
-                  defaultValue: 'false'
+                  type: BOOLEAN
+                  defaultValue: false
                   constraints:
                     nullable: false

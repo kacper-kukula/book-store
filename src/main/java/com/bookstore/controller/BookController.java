@@ -30,28 +30,28 @@ public class BookController {
 
     private final BookService bookService;
 
-    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @GetMapping
     @Operation(summary = "Find all books", description = "Find all available books")
     public List<BookResponseDto> findAll(Pageable pageable) {
         return bookService.findAll(pageable);
     }
 
-    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @GetMapping("/{id}")
     @Operation(summary = "Find a book by ID", description = "Find a book if it exists")
     public BookResponseDto findById(@PathVariable Long id) {
         return bookService.findById(id);
     }
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     @Operation(summary = "Create a book", description = "Creates a new book")
     public BookResponseDto createBook(@RequestBody @Valid BookRequestDto bookRequestDto) {
         return bookService.save(bookRequestDto);
     }
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete a book", description = "Soft delete a book by ID")
@@ -59,7 +59,7 @@ public class BookController {
         bookService.deleteById(id);
     }
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
     @Operation(summary = "Update a book", description = "Update a book by ID")
     public BookResponseDto updateById(
@@ -68,7 +68,7 @@ public class BookController {
         return bookService.updateById(id, bookRequestDto);
     }
 
-    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @GetMapping("/search")
     @Operation(summary = "Search by criteria", description = "Search by criteria")
     public List<BookResponseDto> search(BookSearchParameters searchParameters) {

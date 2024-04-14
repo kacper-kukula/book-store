@@ -14,6 +14,6 @@ public record BookRequestDto(
         @NotNull @PositiveOrZero BigDecimal price,
         @NotBlank @Size(max = 255) String description,
         @NotBlank @Size(max = 255) String coverImage,
-        @NotNull Set<@NotBlank String> categories
+        @NotNull Set<Long> categoryIds
 ) {
 }

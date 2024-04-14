@@ -11,6 +11,6 @@ public record BookResponseDto(
         BigDecimal price,
         String description,
         String coverImage,
-        Set<String> categories
+        Set<Long> categoryIds
 ) {
 }

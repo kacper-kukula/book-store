@@ -13,7 +13,7 @@ public interface CategoryMapper {
 
     CategoryResponseDto toDto(Category category);
 
-    Category toModel(CategoryRequestDto categoryRequestDto);
+    Category toEntity(CategoryRequestDto categoryRequestDto);
 
     @Mapping(target = "id", ignore = true)
     void updateCategoryFromDto(@MappingTarget Category category, CategoryRequestDto dto);

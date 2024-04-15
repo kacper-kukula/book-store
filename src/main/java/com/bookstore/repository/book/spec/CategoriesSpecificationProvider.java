@@ -7,9 +7,9 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 
 @Component
-public class IsbnSpecificationProvider implements SpecificationProvider<Book> {
+public class CategoriesSpecificationProvider implements SpecificationProvider<Book> {
 
-    private static final String SPECIFICATION_KEY = "isbn";
+    private static final String SPECIFICATION_KEY = "categoryIds";
 
     @Override
     public Specification<Book> getSpecification(String[] params) {

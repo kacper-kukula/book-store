@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class MaxPriceSpecificationProvider implements SpecificationProvider<Book> {
 
+    private static final String SPECIFICATION_KEY = "maxPrice";
     private static final int FIRST_INDEX = 0;
 
     @Override
@@ -18,6 +19,6 @@ public class MaxPriceSpecificationProvider implements SpecificationProvider<Book
 
     @Override
     public String getKey() {
-        return "maxPrice";
+        return SPECIFICATION_KEY;
     }
 }

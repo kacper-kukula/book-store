@@ -8,5 +8,6 @@ public record BookSearchParameters(
         String[] isbns,
         BigDecimal minPrice,
         BigDecimal maxPrice,
-        String[] descriptions
+        String[] descriptions,
+        String[] categories
 ) {}

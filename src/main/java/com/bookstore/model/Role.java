@@ -23,7 +23,7 @@ public class Role {
     @Enumerated(EnumType.STRING)
     @NotNull
     @Column(unique = true)
-    private RoleName name = RoleName.USER;
+    private RoleName name;
 
     public enum RoleName {
         USER,

@@ -1,9 +1,9 @@
 package com.bookstore.controller;
 
 import com.bookstore.dto.shoppingcart.CartItemRequestDto;
-import com.bookstore.dto.shoppingcart.CartItemResponseDto;
 import com.bookstore.dto.shoppingcart.ShoppingCartRequestDto;
 import com.bookstore.dto.shoppingcart.ShoppingCartResponseDto;
+import com.bookstore.service.ShoppingCartService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -25,12 +25,14 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(value = "/cart")
 public class ShoppingCartController {
 
+    private final ShoppingCartService shoppingCartService;
+
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @GetMapping
     @Operation(summary = "Retrieve Shopping Cart", description = "Retrieves current shopping cart"
             + " belonging to particular user")
     public ShoppingCartResponseDto findCart() {
-        return null;
+        return shoppingCartService.findCart();
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
@@ -39,24 +41,24 @@ public class ShoppingCartController {
             + "cart belonging to particular user")
     public ShoppingCartResponseDto addToCart(
             @RequestBody @Valid ShoppingCartRequestDto shoppingCartRequestDto) {
-        return null;
+        return shoppingCartService.addToCart(shoppingCartRequestDto);
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @PutMapping("/cart-items/{id}")
     @Operation(summary = "Update shopping cart", description = "Updates quantity of particular "
             + "book in the shopping cart")
-    public CartItemResponseDto updateCartItem(
+    public ShoppingCartResponseDto updateCartItem(
             @PathVariable Long id,
             @RequestBody @Valid CartItemRequestDto cartItemRequestDto) {
-        return null;
+        return shoppingCartService.updateCartItem(id, cartItemRequestDto);
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @DeleteMapping("/cart-items/{id}")
     @Operation(summary = "Delete item from shopping cart", description = "Deletes a particular "
             + "book from the shopping cart")
-    public CartItemResponseDto deleteCartItem(@PathVariable Long id) {
-        return null;
+    public void deleteCartItem(@PathVariable Long id) {
+        shoppingCartService.delete(id);
     }
 }

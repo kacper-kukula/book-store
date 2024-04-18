@@ -14,7 +14,6 @@ import com.bookstore.repository.shoppingcart.ShoppingCartRepository;
 import com.bookstore.service.ShoppingCartService;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -90,19 +89,19 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     }
 
     private User getCurrentUser() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        return (User) authentication.getPrincipal();
+        return (User) SecurityContextHolder
+                .getContext()
+                .getAuthentication()
+                .getPrincipal();
     }
 
     private ShoppingCart getOrCreateCartByUser(User user) {
         Optional<ShoppingCart> shoppingCart = shoppingCartRepository.findByUser(user);
 
-        if (shoppingCart.isEmpty()) {
+        return shoppingCart.orElseGet(() -> {
             ShoppingCart newCart = new ShoppingCart();
             newCart.setUser(user);
             return shoppingCartRepository.save(newCart);
-        }
-
-        return shoppingCart.get();
+        });
     }
 }

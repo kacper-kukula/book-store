@@ -29,6 +29,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 @Table(name = "users")
 public class User implements UserDetails {
 
+    private static final String ROLE_PREFIX = "ROLE_";
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -62,7 +64,11 @@ public class User implements UserDetails {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         List<GrantedAuthority> authorities = new ArrayList<>();
         for (Role role: roles) {
-            authorities.add(new SimpleGrantedAuthority("ROLE_" + role.getName().toString()));
+            if (role.getName() == Role.RoleName.ADMIN) {
+                authorities.add(new SimpleGrantedAuthority(ROLE_PREFIX + Role.RoleName.USER));
+            }
+
+            authorities.add(new SimpleGrantedAuthority(ROLE_PREFIX + role.getName().toString()));
         }
 
         return authorities;

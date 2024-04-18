@@ -17,8 +17,6 @@ public interface ShoppingCartMapper {
     @Mapping(source = "cartItems", target = "cartItems")
     ShoppingCartResponseDto toDto(ShoppingCart shoppingCart);
 
-    //ShoppingCart toEntity(ShoppingCartRequestDto shoppingCartRequestDto);
-
     default Long map(User user) {
         return user.getId();
     }

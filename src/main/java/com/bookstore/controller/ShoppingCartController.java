@@ -27,7 +27,7 @@ public class ShoppingCartController {
 
     private final ShoppingCartService shoppingCartService;
 
-    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+    @PreAuthorize("hasRole('USER')")
     @GetMapping
     @Operation(summary = "Retrieve Shopping Cart", description = "Retrieves current shopping cart"
             + " belonging to particular user")
@@ -35,7 +35,7 @@ public class ShoppingCartController {
         return shoppingCartService.findCart();
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+    @PreAuthorize("hasRole('USER')")
     @PostMapping
     @Operation(summary = "Add items to shopping cart", description = "Adds books to shopping "
             + "cart belonging to particular user")

@@ -38,14 +38,14 @@ public class CategoryController {
         return categoryService.save(categoryRequestDto);
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+    @PreAuthorize("hasRole('USER')")
     @GetMapping
     @Operation(summary = "Find all categoryIds", description = "Find all available categoryIds")
     public List<CategoryResponseDto> findAll(Pageable pageable) {
         return categoryService.findAll(pageable);
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+    @PreAuthorize("hasRole('USER')")
     @GetMapping("/{id}")
     @Operation(summary = "Find a category by ID", description = "Find a category if it exists")
     public CategoryResponseDto findById(@PathVariable Long id) {
@@ -69,7 +69,7 @@ public class CategoryController {
         categoryService.deleteById(id);
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+    @PreAuthorize("hasRole('USER')")
     @GetMapping("/{id}/books")
     @Operation(summary = "Find all books belonging to that category",
             description = "Find a list of books belonging to specific category")

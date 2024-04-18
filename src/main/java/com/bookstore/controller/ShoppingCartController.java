@@ -44,7 +44,7 @@ public class ShoppingCartController {
         return shoppingCartService.addToCart(shoppingCartRequestDto);
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+    @PreAuthorize("hasRole('USER')")
     @PutMapping("/cart-items/{id}")
     @Operation(summary = "Update shopping cart", description = "Updates quantity of particular "
             + "book in the shopping cart")
@@ -54,7 +54,7 @@ public class ShoppingCartController {
         return shoppingCartService.updateCartItem(id, cartItemRequestDto);
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+    @PreAuthorize("hasRole('USER')")
     @DeleteMapping("/cart-items/{id}")
     @Operation(summary = "Delete item from shopping cart", description = "Deletes a particular "
             + "book from the shopping cart")

@@ -22,7 +22,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-@Tag(name = "Category controller", description = "Endpoints for managing books categoryIds")
+@Tag(name = "Category controller",
+        description = "Endpoints for managing books categoryIds")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(value = "/categories")
@@ -32,7 +33,8 @@ public class CategoryController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
-    @Operation(summary = "Create new category", description = "Creates a new book category")
+    @Operation(summary = "Create new category",
+            description = "Creates a new book category")
     public CategoryResponseDto createCategory(
             @RequestBody @Valid CategoryRequestDto categoryRequestDto) {
         return categoryService.save(categoryRequestDto);
@@ -40,21 +42,24 @@ public class CategoryController {
 
     @PreAuthorize("hasRole('USER')")
     @GetMapping
-    @Operation(summary = "Find all categoryIds", description = "Find all available categoryIds")
+    @Operation(summary = "Find all categoryIds",
+            description = "Find all available categoryIds")
     public List<CategoryResponseDto> findAll(Pageable pageable) {
         return categoryService.findAll(pageable);
     }
 
     @PreAuthorize("hasRole('USER')")
     @GetMapping("/{id}")
-    @Operation(summary = "Find a category by ID", description = "Find a category if it exists")
+    @Operation(summary = "Find a category by ID",
+            description = "Find a category if it exists")
     public CategoryResponseDto findById(@PathVariable Long id) {
         return categoryService.findById(id);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
-    @Operation(summary = "Update a category", description = "Update a category by ID")
+    @Operation(summary = "Update a category",
+            description = "Update a category by ID")
     public CategoryResponseDto updateById(
             @PathVariable Long id,
             @RequestBody @Valid CategoryRequestDto categoryRequestDto) {
@@ -64,7 +69,8 @@ public class CategoryController {
     @PreAuthorize("hasRole('ADMIN')")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/{id}")
-    @Operation(summary = "Delete a category", description = "Soft delete a category by ID")
+    @Operation(summary = "Delete a category",
+            description = "Soft delete a category by ID")
     public void deleteById(@PathVariable Long id) {
         categoryService.deleteById(id);
     }

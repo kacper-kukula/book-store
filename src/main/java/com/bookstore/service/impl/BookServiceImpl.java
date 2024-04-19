@@ -35,13 +35,7 @@ public class BookServiceImpl implements BookService {
     @Override
     @Transactional
     public BookResponseDto save(BookRequestDto bookRequestDto) {
-        Set<Long> categoryIds = bookRequestDto.categoryIds();
-        Set<Category> categories = categoryIds.stream()
-                .map(c -> categoryRepository.findById(c)
-                        .orElseThrow(() ->
-                                new EntityNotFoundException(CATEGORY_NOT_FOUND_ERROR + c)))
-                .collect(Collectors.toSet());
-
+        Set<Category> categories = getCategoriesFromBookRequest(bookRequestDto);
         Book book = bookMapper.toEntity(bookRequestDto);
         book.setCategories(categories);
         Book savedBook = bookRepository.save(book);
@@ -76,13 +70,7 @@ public class BookServiceImpl implements BookService {
         Book existingBook = bookRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(BOOK_NOT_FOUND_ERROR + id));
 
-        Set<Long> categoryIds = bookRequestDto.categoryIds();
-        Set<Category> categories = categoryIds.stream()
-                .map(c -> categoryRepository.findById(c)
-                        .orElseThrow(() ->
-                                new EntityNotFoundException(CATEGORY_NOT_FOUND_ERROR + c)))
-                .collect(Collectors.toSet());
-
+        Set<Category> categories = getCategoriesFromBookRequest(bookRequestDto);
         bookMapper.updateBookFromDto(existingBook, bookRequestDto);
         existingBook.setCategories(categories);
         Book updatedBook = bookRepository.save(existingBook);
@@ -99,5 +87,15 @@ public class BookServiceImpl implements BookService {
                 .stream()
                 .map(bookMapper::toDto)
                 .toList();
+    }
+
+    private Set<Category> getCategoriesFromBookRequest(BookRequestDto bookRequestDto) {
+        Set<Long> categoryIds = bookRequestDto.categoryIds();
+
+        return categoryIds.stream()
+                .map(c -> categoryRepository.findById(c)
+                        .orElseThrow(() ->
+                                new EntityNotFoundException(CATEGORY_NOT_FOUND_ERROR + c)))
+                .collect(Collectors.toSet());
     }
 }

@@ -1,7 +1,7 @@
 package com.bookstore.mapper;
 
 import com.bookstore.config.MapperConfig;
-import com.bookstore.dto.order.OrderItemResponseDto;
+import com.bookstore.dto.order.OrderItemDto;
 import com.bookstore.model.CartItem;
 import com.bookstore.model.Order;
 import com.bookstore.model.OrderItem;
@@ -12,7 +12,7 @@ import org.mapstruct.Mapping;
 public interface OrderItemMapper {
 
     @Mapping(source = "book.id", target = "bookId")
-    OrderItemResponseDto toDto(OrderItem orderItem);
+    OrderItemDto toDto(OrderItem orderItem);
 
     @Mapping(target = "id", ignore = true)
     @Mapping(source = "cartItem.book.price", target = "price")

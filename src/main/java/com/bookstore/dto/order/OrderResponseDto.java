@@ -7,7 +7,7 @@ import java.util.Set;
 public record OrderResponseDto(
         Long id,
         Long userId,
-        Set<OrderItemResponseDto> orderItems,
+        Set<OrderItemDto> orderItems,
         LocalDateTime orderDate,
         BigDecimal total,
         String status

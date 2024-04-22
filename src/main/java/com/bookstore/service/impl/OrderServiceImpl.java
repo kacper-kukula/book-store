@@ -1,9 +1,9 @@
 package com.bookstore.service.impl;
 
-import com.bookstore.dto.order.OrderItemResponseDto;
-import com.bookstore.dto.order.OrderRequestDto;
+import com.bookstore.dto.order.CreateOrderRequestDto;
+import com.bookstore.dto.order.OrderItemDto;
 import com.bookstore.dto.order.OrderResponseDto;
-import com.bookstore.dto.order.OrderStatusRequestDto;
+import com.bookstore.dto.order.UpdateOrderStatusRequestDto;
 import com.bookstore.exception.EntityNotFoundException;
 import com.bookstore.mapper.OrderItemMapper;
 import com.bookstore.mapper.OrderMapper;
@@ -39,10 +39,10 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional
-    public OrderResponseDto placeOrder(OrderRequestDto orderRequestDto) {
+    public OrderResponseDto placeOrder(CreateOrderRequestDto createOrderRequestDto) {
         User user = getCurrentUser();
         ShoppingCart shoppingCart = getCartIfValid(user);
-        String shippingAddress = orderRequestDto.shippingAddress();
+        String shippingAddress = createOrderRequestDto.shippingAddress();
         BigDecimal total = calculateTotalPrice(shoppingCart.getCartItems());
 
         Order newOrder = new Order();
@@ -65,9 +65,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional
     public List<OrderResponseDto> findOrderHistory() {
-        User user = getCurrentUser();
-
-        return orderRepository.findAllByUser(user).stream()
+        return orderRepository.findAllByUser(getCurrentUser()).stream()
                 .map(orderMapper::toDto)
                 .toList();
     }
@@ -75,12 +73,10 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional
     public OrderResponseDto updateOrderStatus(
-            Long orderId, OrderStatusRequestDto orderStatusRequestDto) {
-        String statusString = orderStatusRequestDto.status();
+            Long orderId, UpdateOrderStatusRequestDto updateOrderStatusRequestDto) {
+        String statusString = updateOrderStatusRequestDto.status();
 
-        Order order = orderRepository.findById(orderId)
-                .orElseThrow(() ->
-                        new EntityNotFoundException(ORDER_NOT_FOUND_ERR + orderId));
+        Order order = orderRepository.getReferenceById(orderId);
 
         boolean isValidStatus = Arrays.stream(Order.Status.values())
                 .anyMatch(status -> status.name().equalsIgnoreCase(statusString));
@@ -97,7 +93,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional
-    public List<OrderItemResponseDto> findAllFromOrder(Long orderId) {
+    public List<OrderItemDto> findAllFromOrder(Long orderId) {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() ->
                         new EntityNotFoundException(ORDER_NOT_FOUND_ERR + orderId));
@@ -109,7 +105,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional
-    public OrderItemResponseDto findItemFromOrder(Long orderId, Long itemId) {
+    public OrderItemDto findItemFromOrder(Long orderId, Long itemId) {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() ->
                         new EntityNotFoundException(ORDER_NOT_FOUND_ERR + orderId));

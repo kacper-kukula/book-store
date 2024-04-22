@@ -1,6 +1,6 @@
 package com.bookstore.dto.order;
 
-public record OrderItemResponseDto(
+public record OrderItemDto(
         Long id,
         Long bookId,
         Integer quantity

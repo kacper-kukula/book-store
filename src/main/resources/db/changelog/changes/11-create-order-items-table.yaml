@@ -32,6 +32,11 @@ databaseChangeLog:
                   type: BIGINT
                   constraints:
                     nullable: false
+              - column:
+                  name: is_deleted
+                  type: BOOLEAN
+                  constraints:
+                    nullable: false
         - addForeignKeyConstraint:
             baseTableName: order_items
             baseColumnNames: order_id

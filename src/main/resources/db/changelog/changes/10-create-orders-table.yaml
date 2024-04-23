@@ -37,6 +37,9 @@ databaseChangeLog:
                   type: BIGINT
                   constraints:
                     nullable: false
+                    references: users(id)
+                    foreignKeyName: fk_orders_user_id
+                    deleteCascade: true
               - column:
                   name: is_deleted
                   type: BOOLEAN

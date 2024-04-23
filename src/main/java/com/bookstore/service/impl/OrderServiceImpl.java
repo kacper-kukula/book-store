@@ -16,13 +16,12 @@ import com.bookstore.repository.order.OrderRepository;
 import com.bookstore.repository.shoppingcart.ShoppingCartRepository;
 import com.bookstore.service.OrderService;
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,8 +38,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional
-    public OrderResponseDto placeOrder(CreateOrderRequestDto createOrderRequestDto) {
-        User user = getCurrentUser();
+    public OrderResponseDto placeOrder(User user, CreateOrderRequestDto createOrderRequestDto) {
         ShoppingCart shoppingCart = getCartIfValid(user);
         String shippingAddress = createOrderRequestDto.shippingAddress();
         BigDecimal total = calculateTotalPrice(shoppingCart.getCartItems());
@@ -49,7 +47,6 @@ public class OrderServiceImpl implements OrderService {
         newOrder.setUser(user);
         newOrder.setStatus(Order.Status.PENDING);
         newOrder.setTotal(total);
-        newOrder.setOrderDate(LocalDateTime.now());
         newOrder.setShippingAddress(shippingAddress);
         Set<OrderItem> orderItems = shoppingCart.getCartItems().stream()
                 .map(item -> orderItemMapper.toOrderItem(item, newOrder))
@@ -63,9 +60,9 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    @Transactional
-    public List<OrderResponseDto> findOrderHistory() {
-        return orderRepository.findAllByUser(getCurrentUser()).stream()
+    @Transactional(readOnly = true)
+    public List<OrderResponseDto> findOrderHistory(User user, Pageable pageable) {
+        return orderRepository.findAllByUser(user, pageable).stream()
                 .map(orderMapper::toDto)
                 .toList();
     }
@@ -74,37 +71,43 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     public OrderResponseDto updateOrderStatus(
             Long orderId, UpdateOrderStatusRequestDto updateOrderStatusRequestDto) {
-        String statusString = updateOrderStatusRequestDto.status();
+        Order.Status status = updateOrderStatusRequestDto.status();
 
         Order order = orderRepository.getReferenceById(orderId);
 
-        boolean isValidStatus = Arrays.stream(Order.Status.values())
-                .anyMatch(status -> status.name().equalsIgnoreCase(statusString));
+        boolean isValidStatus = Arrays.asList(Order.Status.values()).contains(status);
 
         if (!isValidStatus) {
-            throw new IllegalArgumentException("Order status doesn't exists: " + statusString);
+            throw new IllegalArgumentException("Order status doesn't exists: " + status);
         }
 
-        order.setStatus(Order.Status.valueOf(statusString));
+        order.setStatus(status);
         Order savedOrder = orderRepository.save(order);
 
         return orderMapper.toDto(savedOrder);
     }
 
     @Override
-    @Transactional
-    public List<OrderItemDto> findAllFromOrder(Long orderId) {
+    @Transactional(readOnly = true)
+    public List<OrderItemDto> findAllFromOrder(Long orderId, Pageable pageable) {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() ->
                         new EntityNotFoundException(ORDER_NOT_FOUND_ERR + orderId));
 
-        return order.getOrderItems().stream()
+        List<OrderItemDto> allOrderItems = order.getOrderItems().stream()
                 .map(orderItemMapper::toDto)
-                .toList();
+                .collect(Collectors.toList());
+
+        int pageSize = pageable.getPageSize();
+        int currentPage = pageable.getPageNumber();
+        int startItem = currentPage * pageSize;
+        int endItem = Math.min(startItem + pageSize, allOrderItems.size());
+
+        return allOrderItems.subList(startItem, endItem);
     }
 
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public OrderItemDto findItemFromOrder(Long orderId, Long itemId) {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() ->
@@ -117,13 +120,6 @@ public class OrderServiceImpl implements OrderService {
                         new EntityNotFoundException("Couldn't find item with ID: " + itemId));
 
         return orderItemMapper.toDto(orderItem);
-    }
-
-    private User getCurrentUser() {
-        return (User) SecurityContextHolder
-                .getContext()
-                .getAuthentication()
-                .getPrincipal();
     }
 
     private ShoppingCart getCartIfValid(User user) {

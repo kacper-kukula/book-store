@@ -1,9 +1,10 @@
 package com.bookstore.dto.order;
 
-import jakarta.validation.constraints.NotBlank;
+import com.bookstore.model.Order;
+import jakarta.validation.constraints.NotNull;
 
 public record UpdateOrderStatusRequestDto(
-        @NotBlank
-        String status
+        @NotNull(message = "status can't be empty.")
+        Order.Status status
 ) {
 }

@@ -1,20 +1,23 @@
 package com.bookstore.service;
 
-import com.bookstore.dto.order.OrderItemResponseDto;
-import com.bookstore.dto.order.OrderRequestDto;
+import com.bookstore.dto.order.CreateOrderRequestDto;
+import com.bookstore.dto.order.OrderItemDto;
 import com.bookstore.dto.order.OrderResponseDto;
-import com.bookstore.dto.order.OrderStatusRequestDto;
+import com.bookstore.dto.order.UpdateOrderStatusRequestDto;
+import com.bookstore.model.User;
 import java.util.List;
+import org.springframework.data.domain.Pageable;
 
 public interface OrderService {
 
-    OrderResponseDto placeOrder(OrderRequestDto orderRequestDto);
+    OrderResponseDto placeOrder(User user, CreateOrderRequestDto createOrderRequestDto);
 
-    List<OrderResponseDto> findOrderHistory();
+    List<OrderResponseDto> findOrderHistory(User user, Pageable pageable);
 
-    OrderResponseDto updateOrderStatus(Long orderId, OrderStatusRequestDto orderStatusRequestDto);
+    OrderResponseDto updateOrderStatus(
+            Long orderId, UpdateOrderStatusRequestDto updateOrderStatusRequestDto);
 
-    List<OrderItemResponseDto> findAllFromOrder(Long orderId);
+    List<OrderItemDto> findAllFromOrder(Long orderId, Pageable pageable);
 
-    OrderItemResponseDto findItemFromOrder(Long orderId, Long itemId);
+    OrderItemDto findItemFromOrder(Long orderId, Long itemId);
 }

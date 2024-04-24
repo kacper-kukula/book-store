@@ -2,8 +2,8 @@ package com.bookstore.dto.order;
 
 import jakarta.validation.constraints.NotBlank;
 
-public record OrderStatusRequestDto(
+public record CreateOrderRequestDto(
         @NotBlank
-        String status
+        String shippingAddress
 ) {
 }

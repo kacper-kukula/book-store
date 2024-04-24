@@ -13,9 +13,13 @@ import java.math.BigDecimal;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
 
 @Entity
 @Data
+@SQLDelete(sql = "UPDATE order_items SET is_deleted = TRUE WHERE id = ?")
+@SQLRestriction("is_deleted = FALSE")
 @Table(name = "order_items")
 public class OrderItem {
 
@@ -40,4 +44,7 @@ public class OrderItem {
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private Book book;
+
+    @Column(nullable = false)
+    private boolean isDeleted = false;
 }

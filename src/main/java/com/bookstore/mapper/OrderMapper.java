@@ -1,7 +1,7 @@
 package com.bookstore.mapper;
 
 import com.bookstore.config.MapperConfig;
-import com.bookstore.dto.order.OrderItemResponseDto;
+import com.bookstore.dto.order.OrderItemDto;
 import com.bookstore.dto.order.OrderResponseDto;
 import com.bookstore.model.Order;
 import com.bookstore.model.OrderItem;
@@ -16,7 +16,7 @@ public interface OrderMapper {
     @Mapping(source = "user.id", target = "userId")
     OrderResponseDto toDto(Order order);
 
-    Set<OrderItemResponseDto> map(Set<OrderItem> orderItems);
+    Set<OrderItemDto> map(Set<OrderItem> orderItems);
 
     default Long map(User user) {
         return user.getId();

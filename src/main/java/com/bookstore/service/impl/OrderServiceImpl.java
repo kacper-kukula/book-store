@@ -29,8 +29,6 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class OrderServiceImpl implements OrderService {
 
-    private static final String ORDER_NOT_FOUND_ERR = "Order not found with ID: ";
-
     private final ShoppingCartRepository shoppingCartRepository;
     private final OrderRepository orderRepository;
     private final OrderMapper orderMapper;
@@ -72,9 +70,7 @@ public class OrderServiceImpl implements OrderService {
     public OrderResponseDto updateOrderStatus(
             Long orderId, UpdateOrderStatusRequestDto updateOrderStatusRequestDto) {
         Order.Status status = updateOrderStatusRequestDto.status();
-
         Order order = orderRepository.getReferenceById(orderId);
-
         boolean isValidStatus = Arrays.asList(Order.Status.values()).contains(status);
 
         if (!isValidStatus) {
@@ -90,10 +86,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional(readOnly = true)
     public List<OrderItemDto> findAllFromOrder(Long orderId, Pageable pageable) {
-        Order order = orderRepository.findById(orderId)
-                .orElseThrow(() ->
-                        new EntityNotFoundException(ORDER_NOT_FOUND_ERR + orderId));
-
+        Order order = orderRepository.getReferenceById(orderId);
         List<OrderItemDto> allOrderItems = order.getOrderItems().stream()
                 .map(orderItemMapper::toDto)
                 .collect(Collectors.toList());
@@ -109,9 +102,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional(readOnly = true)
     public OrderItemDto findItemFromOrder(Long orderId, Long itemId) {
-        Order order = orderRepository.findById(orderId)
-                .orElseThrow(() ->
-                        new EntityNotFoundException(ORDER_NOT_FOUND_ERR + orderId));
+        Order order = orderRepository.getReferenceById(orderId);
 
         OrderItem orderItem = order.getOrderItems().stream()
                 .filter(item -> item.getId().equals(itemId))

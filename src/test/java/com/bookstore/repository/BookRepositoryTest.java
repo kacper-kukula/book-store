@@ -1,5 +1,8 @@
 package com.bookstore.repository;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import com.bookstore.model.Book;
 import com.bookstore.repository.book.BookRepository;
 import java.sql.Connection;
@@ -8,7 +11,6 @@ import java.util.List;
 import javax.sql.DataSource;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -63,10 +65,10 @@ public class BookRepositoryTest {
 
         List<Book> actual = bookRepository.findAllByCategoriesId(adventureCategoryId);
 
-        Assertions.assertEquals(3, actual.size());
-        Assertions.assertEquals("Harry Potter", actual.get(0).getTitle());
-        Assertions.assertEquals("LOTR", actual.get(1).getTitle());
-        Assertions.assertEquals("Hobbit", actual.get(2).getTitle());
+        assertEquals(3, actual.size());
+        assertEquals("Harry Potter", actual.get(0).getTitle());
+        assertEquals("LOTR", actual.get(1).getTitle());
+        assertEquals("Hobbit", actual.get(2).getTitle());
     }
 
     @Test
@@ -78,7 +80,7 @@ public class BookRepositoryTest {
 
         List<Book> actual = bookRepository.findAllByCategoriesId(cookingCategoryId);
 
-        Assertions.assertTrue(actual.isEmpty());
+        assertTrue(actual.isEmpty());
     }
 
     @Test
@@ -90,6 +92,6 @@ public class BookRepositoryTest {
 
         List<Book> actual = bookRepository.findAllByCategoriesId(nonExistentCategoryId);
 
-        Assertions.assertTrue(actual.isEmpty());
+        assertTrue(actual.isEmpty());
     }
 }

@@ -1,5 +1,13 @@
 package com.bookstore.service;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
+
 import com.bookstore.dto.book.BookRequestDto;
 import com.bookstore.dto.book.BookResponseDto;
 import com.bookstore.dto.book.BookSearchParameters;
@@ -15,19 +23,12 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import static org.mockito.ArgumentMatchers.any;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.when;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -49,18 +50,17 @@ public class BookServiceTest {
     @InjectMocks
     private BookServiceImpl bookService;
 
-
     @Test
     @DisplayName("""
             Verify that save() method works with valid book
             """)
-    public void save_WithValidBookRequestDto_ReturnsValidBookResponseDto() {
+    void save_WithValidBookRequestDto_ReturnsValidBookResponseDto() {
         // Given
-        BookRequestDto bookRequestDto = new BookRequestDto(
+        final BookRequestDto bookRequestDto = new BookRequestDto(
                 "Odyssey", "Some Author", "000000001", BigDecimal.TEN,
                 "description", "image", Set.of(2L));
 
-        BookResponseDto bookResponseDto = new BookResponseDto(
+        final BookResponseDto bookResponseDto = new BookResponseDto(
                 1L, "Odyssey", "Some Author", "000000001", BigDecimal.TEN,
                 "description", "image", Set.of(2L));
 
@@ -97,7 +97,7 @@ public class BookServiceTest {
     @DisplayName("""
             Verify that findAll() method works
             """)
-    public void findAll_ValidPageable_ReturnsAllBooks() {
+    void findAll_ValidPageable_ReturnsAllBooks() {
         // Given
         Book book1 = new Book();
         book1.setId(1L);
@@ -130,7 +130,8 @@ public class BookServiceTest {
         Pageable pageable = PageRequest.of(0, 10);
         List<Book> books = List.of(book1, book2);
         Page<Book> bookPage = new PageImpl<>(books, pageable, books.size());
-        List<BookResponseDto> expectedBookResponseDtos = List.of(bookResponseDto1, bookResponseDto2);
+        List<BookResponseDto> expectedBookResponseDtos =
+                List.of(bookResponseDto1, bookResponseDto2);
 
         when(bookRepository.findAll(pageable)).thenReturn(bookPage);
         when(bookMapper.toDto(book1)).thenReturn(bookResponseDto1);
@@ -151,7 +152,7 @@ public class BookServiceTest {
     @DisplayName("""
             Verify that findById() method returns correct book by ID
             """)
-    public void findById_ValidId_ReturnsCorrectBook() {
+    void findById_ValidId_ReturnsCorrectBook() {
         // Given
         Long testBookId = 1L;
         Book book = new Book();
@@ -205,11 +206,11 @@ public class BookServiceTest {
         // Given
         Long testBookId = 1L;
 
-        BookRequestDto bookRequestDto = new BookRequestDto(
+        final BookRequestDto bookRequestDto = new BookRequestDto(
                 "Title", "Author", "000000001", BigDecimal.valueOf(15.99),
                 "Description", "Image", Collections.emptySet());
 
-        BookResponseDto expectedBookResponseDto = new BookResponseDto(
+        final BookResponseDto expectedBookResponseDto = new BookResponseDto(
                 testBookId, "New Title", "Author", "000000002", BigDecimal.valueOf(15.99),
                 "Description", "Image", Collections.emptySet());
 
@@ -223,7 +224,7 @@ public class BookServiceTest {
         existingBook.setCoverImage("Image");
         existingBook.setCategories(Collections.emptySet());
 
-        Book updatedBook = new Book();
+        final Book updatedBook = new Book();
         existingBook.setId(testBookId);
         existingBook.setTitle("New Title");
         existingBook.setAuthor("Author");
@@ -255,7 +256,7 @@ public class BookServiceTest {
             """)
     void search_ValidSearchParameters_ReturnsMatchingBooks() {
         // Given
-        BookSearchParameters params = new BookSearchParameters(
+        final BookSearchParameters params = new BookSearchParameters(
                 new String[]{"Title 1", "Title 2"},
                 new String[]{"Author 1", "Author 2"},
                 new String[]{"ISBN 1", "ISBN 2"},
@@ -290,16 +291,34 @@ public class BookServiceTest {
         book2.setCoverImage("Image 2");
         book2.setCategories(Set.of(category));
 
+        BookResponseDto book1Dto = new BookResponseDto(
+                1L, "Title 1", "Author 1", "ISBN 1", BigDecimal.TEN,
+                "Description 1", "Image 1", Set.of(1L)
+        );
+
+        BookResponseDto book2Dto = new BookResponseDto(
+                2L, "Title 2", "Author 2", "ISBN 2", BigDecimal.valueOf(20.0),
+                "Description 2", "Image 2", Set.of(1L)
+        );
+
         List<Book> matchingBooks = List.of(book1, book2);
         Specification<Book> bookSpecification = Mockito.mock(Specification.class);
 
         when(bookSpecificationBuilder.build(params)).thenReturn(bookSpecification);
         when(bookRepository.findAll(bookSpecification)).thenReturn(matchingBooks);
+        when(bookMapper.toDto(book1)).thenReturn(book1Dto);
+        when(bookMapper.toDto(book2)).thenReturn(book2Dto);
 
         // When
         List<BookResponseDto> actual = bookService.search(params);
 
         // Then
-        assertEquals(2, actual.size()); // Ensure correct number of books returned
+        assertEquals(2, actual.size());
+        assertThat(actual.get(0)).isEqualTo(book1Dto);
+        assertThat(actual.get(1)).isEqualTo(book2Dto);
+        verify(bookMapper, times(1)).toDto(book1);
+        verify(bookMapper, times(1)).toDto(book2);
+        verify(bookSpecificationBuilder, times(1)).build(params);
+        verify(bookRepository, times(1)).findAll(any(Specification.class));
     }
 }

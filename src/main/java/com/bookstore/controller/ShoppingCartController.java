@@ -29,16 +29,16 @@ public class ShoppingCartController {
 
     @PreAuthorize("hasRole('USER')")
     @GetMapping
-    @Operation(summary = "Retrieve Shopping Cart", description = "Retrieves current shopping cart"
-            + " belonging to particular user")
+    @Operation(summary = "Retrieve Shopping Cart",
+            description = "Retrieves current shopping cart belonging to particular user")
     public ShoppingCartResponseDto findCart() {
         return shoppingCartService.findCart();
     }
 
     @PreAuthorize("hasRole('USER')")
     @PostMapping
-    @Operation(summary = "Add items to shopping cart", description = "Adds books to shopping "
-            + "cart belonging to particular user")
+    @Operation(summary = "Add items to shopping cart",
+            description = "Adds books to shopping cart belonging to particular user")
     public ShoppingCartResponseDto addToCart(
             @RequestBody @Valid ShoppingCartRequestDto shoppingCartRequestDto) {
         return shoppingCartService.addToCart(shoppingCartRequestDto);
@@ -46,8 +46,8 @@ public class ShoppingCartController {
 
     @PreAuthorize("hasRole('USER')")
     @PutMapping("/cart-items/{id}")
-    @Operation(summary = "Update shopping cart", description = "Updates quantity of particular "
-            + "book in the shopping cart")
+    @Operation(summary = "Update shopping cart",
+            description = "Updates quantity of particular book in the shopping cart")
     public ShoppingCartResponseDto updateCartItem(
             @PathVariable Long id,
             @RequestBody @Valid CartItemRequestDto cartItemRequestDto) {
@@ -56,8 +56,8 @@ public class ShoppingCartController {
 
     @PreAuthorize("hasRole('USER')")
     @DeleteMapping("/cart-items/{id}")
-    @Operation(summary = "Delete item from shopping cart", description = "Deletes a particular "
-            + "book from the shopping cart")
+    @Operation(summary = "Delete item from shopping cart",
+            description = "Deletes a particular book from the shopping cart")
     public void deleteCartItem(@PathVariable Long id) {
         shoppingCartService.delete(id);
     }

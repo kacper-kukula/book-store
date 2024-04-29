@@ -33,6 +33,7 @@ public class CategoryController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     @Operation(summary = "Create new category",
             description = "Creates a new book category")
     public CategoryResponseDto createCategory(
@@ -67,7 +68,6 @@ public class CategoryController {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete a category",
             description = "Soft delete a category by ID")

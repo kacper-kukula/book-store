@@ -51,9 +51,7 @@ public class BookServiceTest {
     private BookServiceImpl bookService;
 
     @Test
-    @DisplayName("""
-            Verify that save() method works with valid book
-            """)
+    @DisplayName("Verify that save() method works with valid book")
     void save_WithValidBookRequestDto_ReturnsValidBookResponseDto() {
         // Given
         final BookRequestDto bookRequestDto = new BookRequestDto(
@@ -94,9 +92,7 @@ public class BookServiceTest {
     }
 
     @Test
-    @DisplayName("""
-            Verify that findAll() method works
-            """)
+    @DisplayName("Verify that findAll() method works")
     void findAll_ValidPageable_ReturnsAllBooks() {
         // Given
         Book book1 = new Book();
@@ -149,9 +145,7 @@ public class BookServiceTest {
     }
 
     @Test
-    @DisplayName("""
-            Verify that findById() method returns correct book by ID
-            """)
+    @DisplayName("Verify that findById() method returns correct book by ID")
     void findById_ValidId_ReturnsCorrectBook() {
         // Given
         Long testBookId = 1L;
@@ -183,9 +177,7 @@ public class BookServiceTest {
     }
 
     @Test
-    @DisplayName("""
-            Verify that deleteById() method works
-            """)
+    @DisplayName("Verify that deleteById() method works")
     void deleteById_ValidId_BookDeletedSuccessfully() {
         // Given
         Long bookId = 1L;
@@ -199,9 +191,7 @@ public class BookServiceTest {
     }
 
     @Test
-    @DisplayName("""
-            Verify that updateById() method updates book ISBN and price
-            """)
+    @DisplayName("Verify that updateById() method updates book ISBN and price")
     void updateById_ValidId_ReturnsUpdatedBookResponseDto() {
         // Given
         Long testBookId = 1L;
@@ -251,9 +241,7 @@ public class BookServiceTest {
     }
 
     @Test
-    @DisplayName("""
-            Verify that search() method works
-            """)
+    @DisplayName("Verify that search() method works")
     void search_ValidSearchParameters_ReturnsMatchingBooks() {
         // Given
         final BookSearchParameters params = new BookSearchParameters(

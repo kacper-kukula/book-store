@@ -1,8 +1,9 @@
-<div style="text-align:center">
+<p align="center">
 <img src="https://i.imgur.com/kKAJrLA_d.webp?maxwidth=660&fidelity=grand" alt="Book Store Logo"/>
+</p>
 
 [Unique Functionalities](#unique-functionalities) • [Database Structure](#database-structure) • [How To Use](#getting-started) • [Video Example](#loom-video) • [Obstacles and Strategies](#obstacles-and-strategies) • [Conclusion](#conclusion)
-</div>
+
 
 # Bookstore Management System
 
@@ -14,7 +15,7 @@ The idea for this project stemmed from the need for a modern and efficient solut
 
 ## Technologies and Tools
 
-<div style="text-align:center">
+<p align="center">
 	<code><img width="50" src="https://user-images.githubusercontent.com/25181517/117201156-9a724800-adec-11eb-9a9d-3cd0f67da4bc.png" alt="Java" title="Java"/></code>
 	<code><img width="50" src="https://user-images.githubusercontent.com/25181517/117207242-07d5a700-adf4-11eb-975e-be04e62b984b.png" alt="Maven" title="Maven"/></code>
 	<code><img width="50" src="https://user-images.githubusercontent.com/25181517/183891303-41f257f8-6b3d-487c-aa56-c497b880d0fb.png" alt="Spring Boot" title="Spring Boot"/></code>
@@ -28,7 +29,7 @@ The idea for this project stemmed from the need for a modern and efficient solut
 	<code><img width="50" src="https://user-images.githubusercontent.com/25181517/186711335-a3729606-5a78-4496-9a36-06efcc74f800.png" alt="Swagger" title="Swagger"/></code>
 	<code><img width="50" src="https://user-images.githubusercontent.com/25181517/192108372-f71d70ac-7ae6-4c0d-8395-51d8870c2ef0.png" alt="Git" title="Git"/></code>
 	<code><img width="50" src="https://user-images.githubusercontent.com/25181517/192108890-200809d1-439c-4e23-90d3-b090cf9a4eea.png" alt="IntelliJ" title="IntelliJ"/></code>
-</div>
+</p>
 <br />
 
 - **As well as**: JWT, Jackson, Lombok, MapStruct, Spring Security, Spring Data JPA
@@ -76,9 +77,9 @@ The idea for this project stemmed from the need for a modern and efficient solut
 ## Database Structure
 
 I've included a diagram illustrating the structure of the MySQL database which can be found below.
-<div style="text-align:center">
+<p align="center">
 <img src="https://i.imgur.com/q07pBhQ_d.webp?maxwidth=760&fidelity=grand" alt="Database Diagram"/>
-</div>
+</p>
 
 ## Getting Started
 
